@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Mesh, Vector3, Color, Group, Euler, Object3D } from 'three';
-import { Text, Html } from '@react-three/drei';
+import { Text, Html, Edges } from '@react-three/drei';
 import { PortfolioItem } from '../types';
 import { easing } from 'maath';
 
@@ -55,14 +55,16 @@ export const Artifact: React.FC<ArtifactProps> = ({
               base: new Color("#111111"),
               hover: new Color("#222222"),
               selected: new Color("#000000"),
-              text: "#ffffff"
+              text: "#ffffff",
+              edge: "#262626" // Very subtle dark grey
           };
       } else if (item.type === 'publication') {
           return {
               base: new Color("#ffffff"),
               hover: new Color("#ffffff"), // Keep white, maybe slight brightness or emission change handled below
               selected: new Color("#ffffff"),
-              text: "#000000"
+              text: "#000000",
+              edge: "#d4d4d4" // Very subtle light grey
           };
       } else {
           // Projects
@@ -70,7 +72,8 @@ export const Artifact: React.FC<ArtifactProps> = ({
               base: new Color("#e5e5e5"),
               hover: new Color("#f5f5f5"),
               selected: new Color("#ffffff"),
-              text: "#000000"
+              text: "#000000",
+              edge: "#d4d4d4" // Very subtle light grey
           };
       }
   }, [item.type]);
@@ -270,6 +273,12 @@ export const Artifact: React.FC<ArtifactProps> = ({
           clearcoat={0.5}
           clearcoatRoughness={0.1}
         />
+        {!isHackerMode && (
+            <Edges 
+                threshold={15} // Only show edges over 15 degrees
+                color={(item.isCorner) ? "#f97316" : config.edge}
+            />
+        )}
       </mesh>
       
       <Text

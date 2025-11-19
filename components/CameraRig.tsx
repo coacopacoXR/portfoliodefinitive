@@ -20,6 +20,7 @@ export const CameraRig: React.FC<CameraRigProps> = ({
   const { camera, gl } = useThree();
   const [isTransitioning, setTransitioning] = useState(false);
   const previousSelection = useRef<string | null>(null);
+  const scrollAccumulator = useRef(0);
   
   // --- SCROLL DECK LOGIC ---
   useEffect(() => {
@@ -30,13 +31,20 @@ export const CameraRig: React.FC<CameraRigProps> = ({
       // Activate Deck Mode
       setDeckMode(true);
 
-      // Determine direction
-      if (e.deltaY > 0) {
-        // Scroll Down -> Next Item
-        setFocusedIndex((prev) => (prev + 1) % itemsCount);
-      } else {
-        // Scroll Up -> Prev Item
-        setFocusedIndex((prev) => (prev - 1 + itemsCount) % itemsCount);
+      // Accumulate delta to reduce sensitivity
+      scrollAccumulator.current += e.deltaY;
+      const threshold = 60; // Adjust this for sensitivity (higher = less sensitive)
+
+      if (Math.abs(scrollAccumulator.current) > threshold) {
+        if (scrollAccumulator.current > 0) {
+             // Scroll Down -> Next Item
+             setFocusedIndex((prev) => (prev + 1) % itemsCount);
+        } else {
+             // Scroll Up -> Prev Item
+             setFocusedIndex((prev) => (prev - 1 + itemsCount) % itemsCount);
+        }
+        // Reset accumulator
+        scrollAccumulator.current = 0;
       }
     };
 

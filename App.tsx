@@ -408,6 +408,12 @@ const App: React.FC = () => {
         const y = iy * spacing - offsetY;
         const z = iz * spacing - offsetZ;
 
+        // Identify corners (outermost positions of the bounding box)
+        // x is 0 or 2, y is 0 or 2, z is 0 or 1
+        const isCorner = (ix === 0 || ix === cols - 1) && 
+                         (iy === 0 || iy === rows - 1) && 
+                         (iz === 0 || iz === totalLayers - 1);
+
         // Apply Rotation to the GRID Position (rotate the whole cluster)
         // 1. Rotate around X axis
         // y' = y*cos - z*sin
@@ -431,7 +437,8 @@ const App: React.FC = () => {
             type: item.type,
             data: item.data,
             position: pos,
-            scale: [size, size, size] // Uniform Cubes
+            scale: [size, size, size], // Uniform Cubes
+            isCorner: isCorner
         });
     });
 
