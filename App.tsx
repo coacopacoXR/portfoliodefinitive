@@ -8,7 +8,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 // --- Subcomponents for Robust Image Handling ---
 
-const PartnerLogo = ({ name, url }: { name: string; url: string }) => {
+interface PartnerLogoProps {
+  name: string;
+  url: string;
+}
+
+const PartnerLogo: React.FC<PartnerLogoProps> = ({ name, url }) => {
   const [error, setError] = useState(false);
 
   if (error) {
@@ -46,13 +51,119 @@ const PhoneIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// --- Controls Help Component (Persistent Legend) ---
+const ControlsHelp = ({ isHackerMode, isHovering }: { isHackerMode: boolean; isHovering: boolean }) => {
+    const [isVisible, setIsVisible] = useState(true);
+    const [activeButton, setActiveButton] = useState<'left' | 'right' | 'middle' | 'wheel' | null>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key.toLowerCase() === 'h') setIsVisible(prev => !prev);
+        };
+        
+        const handleMouseDown = (e: MouseEvent) => {
+            if (e.button === 0) setActiveButton('left');
+            if (e.button === 2) setActiveButton('right');
+            if (e.button === 1) setActiveButton('middle');
+        };
+
+        const handleMouseUp = () => setActiveButton(null);
+        
+        const handleWheel = () => {
+             setActiveButton('wheel');
+             setTimeout(() => setActiveButton(null), 300);
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('mousedown', handleMouseDown);
+        window.addEventListener('mouseup', handleMouseUp);
+        window.addEventListener('wheel', handleWheel);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('mousedown', handleMouseDown);
+            window.removeEventListener('mouseup', handleMouseUp);
+            window.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
+
+    if (!isVisible) return null;
+
+    // Colors
+    const leftColor = isHackerMode ? 'text-green-500' : 'text-orange-500';
+    const rightColor = isHackerMode ? 'text-green-300' : 'text-blue-500';
+    const wheelColor = isHackerMode ? 'text-green-700' : 'text-purple-500';
+    
+    const leftFill = isHackerMode ? 'fill-green-500' : 'fill-orange-500';
+    const rightFill = isHackerMode ? 'fill-green-300' : 'fill-blue-500';
+    const wheelFill = isHackerMode ? 'fill-green-700' : 'fill-purple-500';
+
+    return (
+        <div className={`hidden md:flex absolute bottom-8 left-8 z-40 flex-row items-center gap-6 transition-all duration-500 p-4 rounded-xl border backdrop-blur-md shadow-lg
+             ${isHackerMode ? 'bg-black/80 border-green-900' : 'bg-white/80 border-white/50'}`}>
+            
+            {/* Mouse SVG */}
+            <div className="relative">
+                <svg width="40" height="60" viewBox="0 0 40 60" className={`${isHackerMode ? 'stroke-green-500' : 'stroke-gray-800'} fill-none stroke-[1.5]`}>
+                    {/* Body */}
+                    <rect x="2" y="2" width="36" height="56" rx="12" />
+                    {/* Divider */}
+                    <line x1="20" y1="2" x2="20" y2="25" />
+                    <line x1="2" y1="25" x2="38" y2="25" />
+                    
+                    {/* Left Button (Rotate) */}
+                    <path d="M 2 14 A 12 12 0 0 1 20 2 L 20 25 L 2 25 Z" 
+                        className={`${activeButton === 'left' ? 'opacity-100' : 'opacity-40'} ${leftFill} transition-opacity stroke-none`} />
+                    
+                    {/* Right Button (Zoom) */}
+                    <path d="M 20 2 A 12 12 0 0 1 38 14 L 38 25 L 20 25 Z" 
+                        className={`${activeButton === 'right' ? 'opacity-100' : 'opacity-40'} ${rightFill} transition-opacity stroke-none`} />
+                    
+                    {/* Wheel (Scroll) */}
+                    <rect x="18" y="6" width="4" height="10" rx="2" 
+                        className={`${activeButton === 'wheel' || activeButton === 'middle' ? 'opacity-100' : 'opacity-40'} ${wheelFill} stroke-none transition-opacity`} />
+                </svg>
+            </div>
+
+            {/* Legend Text */}
+            <div className="flex flex-col gap-1.5">
+                 <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-all ${activeButton === 'left' ? 'opacity-100 scale-105' : 'opacity-70'}`}>
+                    <div className={`w-2 h-2 rounded-full ${isHackerMode ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+                    <span className={isHackerMode ? 'text-green-400' : 'text-gray-800'}>
+                        Left: {isHovering ? 'Select' : 'Rotate'}
+                    </span>
+                 </div>
+
+                 <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-all ${activeButton === 'right' ? 'opacity-100 scale-105' : 'opacity-70'}`}>
+                    <div className={`w-2 h-2 rounded-full ${isHackerMode ? 'bg-green-300' : 'bg-blue-500'}`}></div>
+                    <span className={isHackerMode ? 'text-green-400' : 'text-gray-800'}>
+                        Right: Zoom
+                    </span>
+                 </div>
+
+                 <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider transition-all ${activeButton === 'wheel' ? 'opacity-100 scale-105' : 'opacity-70'}`}>
+                    <div className={`w-2 h-2 rounded-full ${isHackerMode ? 'bg-green-700' : 'bg-purple-500'}`}></div>
+                    <span className={isHackerMode ? 'text-green-400' : 'text-gray-800'}>
+                        Wheel: Scroll Deck
+                    </span>
+                 </div>
+
+                 <div className="h-[1px] w-full bg-gray-300/50 my-1"></div>
+                 <div className="text-[8px] text-gray-400 font-mono uppercase">
+                     Press [H] to Hide
+                 </div>
+            </div>
+        </div>
+    );
+};
+
 // --- 2D View Component ---
 
 const TwoDimensionalView = ({ items, onSelect }: { items: PortfolioItem[], onSelect: (id: string) => void }) => {
     // Separate items by type
     const projects = items.filter(i => i.type === 'project');
     const publications = items.filter(i => i.type === 'publication');
-    const music = items.filter(i => i.type === 'music')[0]; // Assuming single artist entry for now
+    const music = items.filter(i => i.type === 'music')[0]; 
 
     return (
         <motion.div 
@@ -182,6 +293,10 @@ const App: React.FC = () => {
   const [introComplete, setIntroComplete] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   
+  // Deck Mode State (Cards Scrolling)
+  const [deckMode, setDeckMode] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+
   // Easter Egg State
   const [isHackerMode, setIsHackerMode] = useState(false);
   const contactContainerRef = useRef<HTMLDivElement>(null);
@@ -204,8 +319,6 @@ const App: React.FC = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    
-    // Easter egg for console watchers
     console.log("%c Looking for bugs? 🐛 \n Try the Konami Code for a different perspective.", "color: #ea580c; font-weight: bold; font-size: 12px;");
 
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -247,54 +360,79 @@ const App: React.FC = () => {
     }
   };
 
-  // Initial Choice Handler
   const handleEnter = (mode: '3d' | '2d') => {
       setViewMode(mode);
       setIntroComplete(true);
-      // Trigger the tutorial overlay after entering
       setShowTutorial(true);
   }
 
-  // Transform raw data into positioned 3D items
+  // Transform raw data into positioned 3D items (Rotated Voxel Cube Layout)
   const items: PortfolioItem[] = useMemo(() => {
     const result: PortfolioItem[] = [];
+    let globalIndex = 0;
     
-    // Layout Projects (Tall Monoliths)
-    projectsData.forEach((project, index) => {
-      result.push({
-        id: `project-${index}`,
-        type: 'project',
-        data: project,
-        position: [(index - 1) * 3.5, 1.5, (index % 2) * 2], // Stagger depth slightly for parallax
-        scale: [1.2, 3, 0.4] 
-      });
-    });
+    // Combine all data into a linear sequence
+    const allData = [
+        ...projectsData.map(d => ({ type: 'project' as const, data: d })),
+        { type: 'music' as const, data: musicData },
+        ...publicationsData.map(d => ({ type: 'publication' as const, data: d }))
+    ];
+    
+    // Grid Configuration: 3x3x2 (18 items) fits perfectly
+    const cols = 3;
+    const rows = 3;
+    // Layers will auto-expand if data grows, but for 18 items it's 2 layers.
+    const size = 1.5; // Size of each cube
+    const gap = 0.5; // Gap between cubes
+    const spacing = size + gap;
+    
+    // Center offsets (based on 3x3x2 approx dims)
+    const totalLayers = Math.ceil(allData.length / (cols * rows));
+    const offsetX = ((cols - 1) * spacing) / 2;
+    const offsetY = ((rows - 1) * spacing) / 2;
+    const offsetZ = ((totalLayers - 1) * spacing) / 2;
 
-    // Layout Publications (Flat Tiles/Slabs)
-    const cols = 4;
-    publicationsData.forEach((pub, index) => {
-      const col = index % cols;
-      const row = Math.floor(index / cols);
-      result.push({
-        id: `pub-${index}`,
-        type: 'publication',
-        data: pub,
-        position: [
-          (col - 1.5) * 2.5, 
-          0.15, 
-          6 + (row * 3.5) // More z-depth
-        ],
-        scale: [1.8, 0.3, 1.8] 
-      });
-    });
+    // Rotation Angles (45 deg on X, 45 deg on Y for "Corner Standing" look)
+    const rad = Math.PI / 4;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
 
-    // Layout Music (Distinct Object)
-    result.push({
-        id: 'music-1',
-        type: 'music',
-        data: musicData,
-        position: [6, 1, -2], // Background right
-        scale: [1.5, 1.5, 1.5] // Cubic / Boxy "Hardware" feel
+    allData.forEach((item, i) => {
+        // Map index to 3D grid (x, y, z)
+        const ix = i % cols;
+        const iy = Math.floor(i / cols) % rows;
+        const iz = Math.floor(i / (cols * rows));
+        
+        // Base Position centered in grid
+        const x = ix * spacing - offsetX;
+        const y = iy * spacing - offsetY;
+        const z = iz * spacing - offsetZ;
+
+        // Apply Rotation to the GRID Position (rotate the whole cluster)
+        // 1. Rotate around X axis
+        // y' = y*cos - z*sin
+        // z' = y*sin + z*cos
+        const y_rotX = y * cos - z * sin;
+        const z_rotX = y * sin + z * cos;
+        const x_rotX = x; 
+
+        // 2. Rotate around Y axis
+        // x'' = x'*cos + z'*sin
+        // z'' = -x'*sin + z'*cos
+        const x_final = x_rotX * cos + z_rotX * sin;
+        const z_final = -x_rotX * sin + z_rotX * cos;
+        const y_final = y_rotX; 
+
+        const pos: [number, number, number] = [x_final, y_final, z_final];
+        
+        result.push({
+            id: `${item.type}-${i}`,
+            index: globalIndex++,
+            type: item.type,
+            data: item.data,
+            position: pos,
+            scale: [size, size, size] // Uniform Cubes
+        });
     });
 
     return result;
@@ -307,12 +445,7 @@ const App: React.FC = () => {
   return (
     <div className={`relative w-full h-screen ${isHackerMode ? 'bg-black text-green-500' : 'bg-[#f0f0f0] text-[#1a1a1a]'} overflow-hidden font-typewriter selection:bg-gray-300 transition-colors duration-500`}>
       
-      {/* 
-          ====================================
-          ANIMATED HEADER / INTRO LANDING
-          ====================================
-          Moves to TOP-RIGHT corner after intro
-      */}
+      {/* HEADER & INTRO */}
       <motion.div 
         initial={false}
         animate={{
@@ -332,21 +465,18 @@ const App: React.FC = () => {
             Francisco García Rivera
           </h1>
           
-          {/* Roles Tagline - Hidden on mobile when docked to reduce clutter */}
           <p className={`font-bold mt-2 tracking-wider uppercase mb-3 transition-all duration-700 ${introComplete ? 'hidden md:block text-xs' : 'text-sm md:text-base'} ${isHackerMode ? 'text-green-400 animate-pulse' : 'text-orange-600'}`}>
             Creative / Researcher / Technologist / Producer / Designer
           </p>
           
-          {/* Education List - Hidden on mobile to be cleaner */}
           <div className={`mb-4 space-y-1 leading-snug transition-all duration-700 ${introComplete ? 'hidden md:block text-[11px]' : 'text-xs'} ${isHackerMode ? 'text-green-700' : 'text-gray-600'}`}>
             <p>PhD Informatics / Product Design & Dev.</p>
             <p>MSc Intelligent Automation</p>
             <p>BSc Mechanical Engineering</p>
           </div>
           
-          {/* Contact Info Icons with Popouts */}
+          {/* Contacts */}
           <div ref={contactContainerRef} className={`flex gap-3 mt-1 ${introComplete ? 'justify-end' : 'justify-start'}`}>
-            {/* Email Icon & Popup */}
             <div className="relative">
               <button 
                 onClick={() => togglePopup('email')}
@@ -355,7 +485,6 @@ const App: React.FC = () => {
                   ${isHackerMode 
                     ? 'border-green-600 hover:bg-green-900 text-green-500' 
                     : 'border-gray-300 hover:border-orange-500 hover:text-orange-600 bg-white'}`}
-                title="Email Me"
               >
                 <MailIcon className="w-4 h-4" />
               </button>
@@ -385,7 +514,6 @@ const App: React.FC = () => {
               </AnimatePresence>
             </div>
 
-            {/* Phone Icon & Popup */}
             <div className="relative">
               <button 
                 onClick={() => togglePopup('phone')}
@@ -394,7 +522,6 @@ const App: React.FC = () => {
                   ${isHackerMode 
                     ? 'border-green-600 hover:bg-green-900 text-green-500' 
                     : 'border-gray-300 hover:border-orange-500 hover:text-orange-600 bg-white'}`}
-                title="Call Me"
               >
                 <PhoneIcon className="w-4 h-4" />
               </button>
@@ -425,7 +552,6 @@ const App: React.FC = () => {
             </div>
           </div>
 
-          {/* INTRO BUTTONS - Only visible when not complete */}
           {!introComplete && (
               <div className="mt-8 flex flex-col md:flex-row gap-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                   <button 
@@ -445,7 +571,15 @@ const App: React.FC = () => {
         </div>
       </motion.div>
       
-      {/* Nav Toggle (Switched to TOP LEFT) */}
+      {/* Controls Overlay (Bottom Left) */}
+      {viewMode === '3d' && introComplete && (
+        <ControlsHelp 
+            isHackerMode={isHackerMode} 
+            isHovering={hoveredId !== null} 
+        />
+      )}
+
+      {/* Nav Toggle (TOP LEFT) */}
       <div className={`absolute top-4 left-4 md:top-6 md:left-8 z-30 pointer-events-auto flex flex-col items-start transition-opacity duration-700 ${introComplete ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <div className="mb-3 hidden md:block">
              <p className={`text-[10px] font-mono text-left max-w-[200px] leading-4 ${isHackerMode ? 'text-green-600' : 'text-gray-500 opacity-80'}`}>
@@ -463,14 +597,9 @@ const App: React.FC = () => {
             <span className="opacity-30">/</span>
             <span className={viewMode === '3d' ? "opacity-50" : (isHackerMode ? 'text-green-400' : "text-orange-600")}>2D View</span>
         </button>
-        {viewMode === '3d' && (
-            <div className={`hidden md:block text-[9px] tracking-wider mt-2 animate-pulse uppercase ${isHackerMode ? 'text-green-700' : 'text-gray-400'}`}>
-                [Interactive Scene]
-            </div>
-        )}
       </div>
 
-      {/* Contact Float Button (Hidden during intro) */}
+      {/* Contact Float */}
       <div className={`absolute bottom-6 right-6 md:bottom-8 md:right-8 z-40 pointer-events-auto transition-opacity duration-700 ${introComplete ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <button 
             onClick={() => setShowContactForm(true)}
@@ -481,143 +610,54 @@ const App: React.FC = () => {
         </button>
       </div>
 
-      {/* Trusted Partners Strip (Visible in 3D, HIDDEN ON MOBILE) */}
-      {viewMode === '3d' && !isHackerMode && introComplete && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="absolute bottom-0 left-0 w-full z-20 pointer-events-none p-6 md:p-10 bg-gradient-to-t from-[#f0f0f0] via-[#f0f0f0] to-transparent hidden md:block"
+      {/* 3D Scene */}
+      <AnimatePresence>
+        {viewMode === '3d' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 z-10"
           >
-              <div className="flex flex-col items-center md:items-start gap-4 pointer-events-auto">
-                  <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold ml-1 border-b border-gray-300 pb-1">Collaborators</span>
-                  <div className="flex flex-wrap gap-x-8 gap-y-6 items-center justify-center md:justify-start">
-                      {logos.map((logo) => (
-                          <PartnerLogo key={logo.name} name={logo.name} url={logo.url} />
-                      ))}
-                  </div>
-              </div>
-          </motion.div>
-      )}
-
-      {/* 2D Content View */}
-      <AnimatePresence mode="wait">
-        {viewMode === '2d' && introComplete && (
-             <TwoDimensionalView items={items} onSelect={setSelectedId} />
-        )}
-      </AnimatePresence>
-
-      {/* 3D Canvas */}
-      {/* Always render Canvas to avoid re-mounts, but blur it during intro or if 2D mode covers it */}
-      {(viewMode === '3d' || !introComplete) && (
-          <div className={`absolute inset-0 transition-all duration-1000 ${!introComplete ? 'blur-md scale-105 grayscale opacity-50' : 'blur-0 scale-100 grayscale-0 opacity-100'}`}>
-            <Canvas
-                shadows
-                dpr={[1, 2]}
-                camera={{ position: [10, 5, 10], fov: 35 }} // General angled perspective
-                className="touch-none"
-                onPointerMissed={() => setSelectedId(null)}
-            >
-                <Scene 
+            <Canvas shadows camera={{ position: [0, 0, 14], fov: 45, near: 0.01 }}>
+              <Scene 
                 items={items} 
                 selectedId={selectedId} 
                 onSelect={setSelectedId}
                 onHover={setHoveredId}
                 isHackerMode={isHackerMode}
-                />
+                introComplete={introComplete}
+                deckMode={deckMode}
+                setDeckMode={setDeckMode}
+                focusedIndex={focusedIndex}
+                setFocusedIndex={setFocusedIndex}
+              />
             </Canvas>
-          </div>
-      )}
-
-      {/* UI Overlay for Items (Works for both 2D and 3D) */}
-      <Overlay item={selectedItem} onClose={() => setSelectedId(null)} />
-
-      {/* Tutorial Overlay (Highlighting the View Toggle) */}
-      <AnimatePresence>
-        {showTutorial && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowTutorial(false)}
-            className="fixed inset-0 z-[60] bg-black/60 cursor-pointer"
-          >
-            <div className="absolute top-4 left-4 md:top-6 md:left-8 pointer-events-none">
-              {/* Highlighting Box */}
-              <div className="relative px-3 py-2 md:px-4 md:py-2">
-                <div className="absolute -inset-2 border-2 border-orange-500 rounded-lg animate-pulse shadow-[0_0_20px_rgba(249,115,22,0.5)]"></div>
-                {/* Invisible placeholder to match button size */}
-                <div className="opacity-0 text-xs font-bold uppercase tracking-wider border px-3 py-2 md:px-4 md:py-2 flex items-center gap-2">
-                   <span>3D View</span>
-                   <span>/</span>
-                   <span>2D View</span>
-                </div>
-              </div>
-              
-              {/* Explainer Text */}
-              <motion.div 
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="absolute left-full top-1/2 -translate-y-1/2 ml-6 w-48"
-              >
-                <div className="h-[1px] w-4 bg-orange-500 absolute right-full top-1/2 mr-2"></div>
-                <p className="text-white text-xs font-bold uppercase tracking-wider text-shadow">
-                  Switch Interface Here
-                </p>
-                <p className="text-gray-300 text-[10px] leading-tight mt-1">
-                  Click anywhere to continue
-                </p>
-              </motion.div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Contact Form Modal */}
+      
+      {/* 2D View */}
       <AnimatePresence>
-        {showContactForm && (
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4"
-            >
-                <motion.div 
-                    initial={{ scale: 0.95, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    className="bg-[#f9f9f9] p-8 w-full max-w-md shadow-2xl border border-white relative"
-                >
-                    <button 
-                        onClick={() => setShowContactForm(false)}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-black font-bold"
-                    >✕</button>
-                    
-                    <h2 className="text-xl font-bold text-gray-900 mb-6 tracking-tight border-b border-black/10 pb-4">CONTACT ME</h2>
-                    
-                    <div className="space-y-4">
-                        <p className="text-sm text-gray-600">
-                            Send me a message regarding collaborations, projects, or research.
-                        </p>
-                        
-                        <div className="flex flex-col gap-3 pt-4">
-                            <a 
-                                href={`mailto:${email}`}
-                                className="w-full text-center bg-[#1a1a1a] text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-colors"
-                            >
-                                Launch Email App
-                            </a>
-                            <div className="text-center text-[10px] text-gray-400 font-mono">- OR -</div>
-                             <div className="bg-white p-4 border border-gray-200 text-xs text-gray-500 select-all font-mono text-center">
-                                {email}
-                             </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </motion.div>
+        {viewMode === '2d' && (
+            <TwoDimensionalView items={items} onSelect={setSelectedId} />
         )}
       </AnimatePresence>
+
+      {/* Detail Overlay */}
+      <Overlay item={selectedItem} onClose={() => setSelectedId(null)} />
+      
+      {/* Partner Logos Footer */}
+      {introComplete && viewMode === '2d' && (
+         <div className="absolute bottom-0 left-0 w-full p-6 bg-[#f0f0f0] z-10 pointer-events-none flex justify-center opacity-50 grayscale hover:grayscale-0 transition-all">
+             <div className="flex gap-8 items-center overflow-hidden">
+                 {logos.map((l, i) => (
+                    <PartnerLogo key={i} name={l.name} url={l.url} />
+                 ))}
+             </div>
+         </div>
+      )}
     </div>
   );
 };

@@ -10,9 +10,17 @@ interface SceneProps {
   onSelect: (id: string | null) => void;
   onHover: (id: string | null) => void;
   isHackerMode: boolean;
+  introComplete: boolean;
+  deckMode: boolean;
+  setDeckMode: (val: boolean) => void;
+  focusedIndex: number;
+  setFocusedIndex: (val: any) => void;
 }
 
-export const Scene: React.FC<SceneProps> = ({ items, selectedId, onSelect, onHover, isHackerMode }) => {
+export const Scene: React.FC<SceneProps> = ({ 
+  items, selectedId, onSelect, onHover, isHackerMode, introComplete,
+  deckMode, setDeckMode, focusedIndex, setFocusedIndex
+}) => {
   const selectedItem = items.find(i => i.id === selectedId);
 
   return (
@@ -47,6 +55,9 @@ export const Scene: React.FC<SceneProps> = ({ items, selectedId, onSelect, onHov
               onSelect={() => onSelect(selectedId === item.id ? null : item.id)}
               onHover={(hover) => onHover(hover ? item.id : null)}
               isHackerMode={isHackerMode}
+              introComplete={introComplete}
+              deckMode={deckMode}
+              focusedIndex={focusedIndex}
             />
           ))}
         </group>
@@ -67,6 +78,9 @@ export const Scene: React.FC<SceneProps> = ({ items, selectedId, onSelect, onHov
         <CameraRig 
           selectedPosition={selectedItem ? selectedItem.position : null}
           selectedScale={selectedItem ? selectedItem.scale : null}
+          itemsCount={items.length}
+          setDeckMode={setDeckMode}
+          setFocusedIndex={setFocusedIndex}
         />
       </Suspense>
     </>

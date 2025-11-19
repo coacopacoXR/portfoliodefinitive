@@ -1,5 +1,4 @@
 import React from 'react';
-import { ThreeElements } from '@react-three/fiber';
 
 export interface Project {
   title: string;
@@ -30,19 +29,15 @@ export type ItemType = 'project' | 'publication' | 'music';
 
 export interface PortfolioItem {
   id: string;
+  index: number;
   type: ItemType;
   data: Project | Publication | Music;
   position: [number, number, number];
+  rotation?: [number, number, number];
   scale: [number, number, number];
 }
 
 export interface SelectionState {
   selectedId: string | null;
   hoveredId: string | null;
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements extends ThreeElements {}
-  }
 }
