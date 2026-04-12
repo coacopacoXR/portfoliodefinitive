@@ -15,11 +15,12 @@ interface ArtifactProps {
   introComplete: boolean;
   deckMode: boolean;
   focusedIndex: number;
+  activeFilter: string | null;
 }
 
-export const Artifact: React.FC<ArtifactProps> = ({ 
+export const Artifact: React.FC<ArtifactProps> = ({
   item, isSelected, isAnySelected, onSelect, onHover, isHackerMode, introComplete,
-  deckMode, focusedIndex
+  deckMode, focusedIndex, activeFilter
 }) => {
   const meshRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
@@ -48,7 +49,7 @@ export const Artifact: React.FC<ArtifactProps> = ({
   const vec = new Vector3();
 
   // --- COLOR CONFIGURATION ---
-  // Projects: Light Gray, Publications: White, Music: Black
+  // Projects: Steel blue, Publications: Warm cream, Music: Black
   const config = useMemo(() => {
       if (item.type === 'music') {
           return {
@@ -56,24 +57,32 @@ export const Artifact: React.FC<ArtifactProps> = ({
               hover: new Color("#222222"),
               selected: new Color("#000000"),
               text: "#ffffff",
-              edge: "#262626" // Very subtle dark grey
+              edge: "#262626"
           };
       } else if (item.type === 'publication') {
           return {
-              base: new Color("#ffffff"),
-              hover: new Color("#ffffff"), // Keep white, maybe slight brightness or emission change handled below
-              selected: new Color("#ffffff"),
-              text: "#000000",
-              edge: "#d4d4d4" // Very subtle light grey
+              base: new Color("#fef3c7"),
+              hover: new Color("#fde68a"),
+              selected: new Color("#fde68a"),
+              text: "#78350f",
+              edge: "#f59e0b"
+          };
+      } else if (item.type === 'scholar') {
+          return {
+              base: new Color("#ede9fe"),
+              hover: new Color("#ddd6fe"),
+              selected: new Color("#ddd6fe"),
+              text: "#3b0764",
+              edge: "#7c3aed"
           };
       } else {
           // Projects
           return {
-              base: new Color("#e5e5e5"),
-              hover: new Color("#f5f5f5"),
-              selected: new Color("#ffffff"),
-              text: "#000000",
-              edge: "#d4d4d4" // Very subtle light grey
+              base: new Color("#dbeafe"),
+              hover: new Color("#bfdbfe"),
+              selected: new Color("#bfdbfe"),
+              text: "#1e3a5f",
+              edge: "#60a5fa"
           };
       }
   }, [item.type]);
@@ -81,6 +90,9 @@ export const Artifact: React.FC<ArtifactProps> = ({
   const colorGhost = new Color("#f0f0f0");
   const emissiveBase = new Color("#000000");
   const emissiveHover = new Color("#ea580c");
+
+  const isFilteredOut = activeFilter !== null && item.type !== activeFilter && item.type !== 'scholar';
+  const isFilterMatch = activeFilter !== null && item.type === activeFilter;
 
   useFrame((state, delta) => {
     if (groupRef.current) {
@@ -135,9 +147,18 @@ export const Artifact: React.FC<ArtifactProps> = ({
           targetRot.copy(dummy.rotation);
       }
 
+      // Filter: push filtered-out cubes back in Z, nudge matches forward
+      if (isFilteredOut) {
+        targetPos.z -= 7;
+      } else if (isFilterMatch) {
+        targetPos.z += 1.2;
+      }
+
       // Apply Damping
       easing.damp3(groupRef.current.position, targetPos, deckMode ? 0.4 : 0.8, delta);
       easing.dampE(groupRef.current.rotation, targetRot, deckMode ? 0.4 : 0.6, delta);
+      // Filter scale: shrink filtered-out cubes to a point
+      easing.damp3(groupRef.current.scale, isFilteredOut ? [0.001, 0.001, 0.001] : [1, 1, 1], 0.35, delta);
     }
 
     if (!meshRef.current) return;
@@ -248,29 +269,29 @@ export const Artifact: React.FC<ArtifactProps> = ({
         ref={meshRef}
         scale={item.scale}
         onClick={(e) => {
+          if (isFilteredOut) return;
           e.stopPropagation();
           onSelect();
         }}
         onPointerOver={(e) => {
+          if (isFilteredOut) return;
           e.stopPropagation();
           setHovered(true);
           onHover(true);
           document.body.style.cursor = 'pointer';
         }}
-        onPointerOut={(e) => {
+        onPointerOut={() => {
           setHovered(false);
           onHover(false);
           document.body.style.cursor = 'auto';
         }}
-        castShadow
-        receiveShadow
       >
         <boxGeometry args={[1, 1, 1]} />
         <meshPhysicalMaterial
-          color="#e5e5e5" 
+          color={config.base}
           roughness={0.5}
-          metalness={0.1}
-          clearcoat={0.5}
+          metalness={0.0}
+          clearcoat={0.2}
           clearcoatRoughness={0.1}
         />
         {!isHackerMode && (

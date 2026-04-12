@@ -1,6 +1,9 @@
 import React from 'react';
 import { PortfolioItem, Project, Publication, Music } from '../types';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AnalyzerDemo } from './AnalyzerDemo';
+import { KitchenDemo } from './KitchenDemo';
+import { ViewpointDemo } from './ViewpointDemo';
 
 interface OverlayProps {
   item: PortfolioItem | null;
@@ -28,15 +31,15 @@ export const Overlay: React.FC<OverlayProps> = ({ item, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
           className="fixed inset-0 z-50 pointer-events-none"
         >
           <motion.div
-            initial={{ x: 50, opacity: 0 }}
+            initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 50, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "circOut" }}
-            className="absolute top-0 right-0 h-full w-full md:w-[450px] bg-white/90 backdrop-blur-xl border-l border-white/20 shadow-2xl p-12 flex flex-col justify-center pointer-events-auto overflow-y-auto"
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+            className="absolute top-0 right-0 h-full w-full md:w-[750px] bg-white/95 backdrop-blur-xl border-l border-white/20 shadow-2xl p-12 flex flex-col justify-center pointer-events-auto overflow-y-auto"
           >
             {/* Close Button */}
             <button 
@@ -65,13 +68,24 @@ export const Overlay: React.FC<OverlayProps> = ({ item, onClose }) => {
                   
                   <div className="flex flex-col gap-3 mt-8">
                     {item.data.youtube && (
-                      <a 
-                        href={item.data.youtube} 
-                        target="_blank" 
+                      <a
+                        href={item.data.youtube}
+                        target="_blank"
                         rel="noreferrer"
                         className="group flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all"
                       >
                         <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Watch Video</span>
+                        <span className="text-gray-400 group-hover:text-gray-900 transition-colors">→</span>
+                      </a>
+                    )}
+                    {(item.data as any).github && (
+                      <a
+                        href={(item.data as any).github}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="group flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 border border-gray-200 transition-all"
+                      >
+                        <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">View on GitHub</span>
                         <span className="text-gray-400 group-hover:text-gray-900 transition-colors">→</span>
                       </a>
                     )}
@@ -81,6 +95,10 @@ export const Overlay: React.FC<OverlayProps> = ({ item, onClose }) => {
                       </div>
                     )}
                   </div>
+
+                  {(item.data as any).demo === 'analyzer' && <AnalyzerDemo />}
+                  {(item.data as any).demo === 'kitchen' && <KitchenDemo />}
+                  {(item.data as any).demo === 'viewpoint' && <ViewpointDemo />}
                 </>
               )}
 

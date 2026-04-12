@@ -1,6 +1,33 @@
-import { Project, Publication, Music } from './types';
+import { Project, Publication, Music, Scholar } from './types';
 
 export const projectsData: Project[] = [
+  {
+    "title": "Hospital Cleaning Analytics Dashboard",
+    "description": "Commissioned by a consulting firm managing facility services across hospitals in Granada, Spain. The hospitals conduct continuous cleanliness audits — scoring elements, zones, and room types across every unit — and the raw data was piling up in CSV/Excel files with no efficient way to act on it.\n\nI built a Flask web application that ingests those audit files, processes them with Pandas, and instantly generates six types of interactive Plotly charts: mean cleanliness scores over time, breakdowns by hospital unit, by zone, by zone and room type, by structural elements per quarter, and cross-analyses of unit vs. zone. A date-range filter lets managers zoom into any period for targeted comparisons.\n\nThe result: the consulting team could identify which floors, zones, or room types were consistently underperforming and reallocate cleaning staff and schedules accordingly — shifting from reactive to data-driven resource planning.",
+    "youtube": "",
+    "github": "https://github.com/frangarivera94/Analyzer",
+    "demo": "analyzer",
+    "linked_paper": "",
+    "images": []
+  },
+  {
+    "title": "Viewpoint Arena — AI-Collaborative Design Review",
+    "description": "How do you study the way people look at things together? Viewpoint Arena is an experimental research sandbox built to answer exactly that — a browser-based 3D environment where AI agents and human users conduct collaborative design reviews of engineering models.\n\nThe platform places multiple AI agents (each with a role: PRESENTER, REVIEWER, OBSERVER) around a shared 3D object — a synthesizer assembly, a bicycle, or a user-imported STEP file. Each agent has its own perspective, gaze direction, and behavioral state (IDLE, MOVING, INSPECTING, DISCUSSING, FOLLOWING). The system tracks where every participant is looking and accumulates a volumetric attention heatmap on the model surface.\n\nSeven distinct view modes let you study collaboration differently: a split-screen hybrid comparing your perspective with a collaborator's, an AI-guided focus mode that frames areas of collective interest, a leader/follower presenter mode, and an overhead heatmap view. Visual grounding aids — gaze rays, camera frustums, ghost trails — make attention visible and legible.\n\nAn AI intelligence layer runs in parallel: a live transcript generates contextual dialogue based on what agents are inspecting, and an Insights Deck surfaces categorised findings (Risks, Rationale, Actions) linked to a mock engineering requirements database. Spatial comments and drawing annotations can be pinned to model geometry and tied to meeting records.\n\nBuilt as a research platform to study attention, social presence, and AI-assisted sensemaking in remote engineering collaboration. Stack: React 19, React Three Fiber, Three.js, Zustand, occt-import-js (STEP/CAD import).",
+    "youtube": "",
+    "github": "",
+    "demo": "viewpoint",
+    "linked_paper": "",
+    "images": []
+  },
+  {
+    "title": "OptimaChef — Kitchen Operations Simulator",
+    "description": "Commissioned by Optima Chef — a professional kitchen training company that deploys experienced chef trainers directly into clients’ facilities. Restaurants fail not because the food is bad, but because the kitchen can’t keep up. They needed a way to model and stress-test kitchen operations before stepping into a real service.\n\nOptimaChef is a browser-based discrete event simulation (DES) environment that lets restaurant operators design their kitchen as a network of nodes (order generators, prep stations, cooking stations, plating, sinks), then simulate a full service second by second — worker energy depletion, shift rotations, queue dynamics, batch processing.\n\nAn NSGA-II multi-objective genetic algorithm automatically searches the Pareto frontier across throughput, average wait time, and peak queue depth, returning a set of optimal trade-off configurations. The analytics dashboard surfaces utilisation per station, bottleneck detection, and order-flow histograms. Results export to Excel or Word for sharing with kitchen managers.\n\nStack: React 19, TypeScript, Vite, Tailwind CSS, Recharts, Express, SQLite.",
+    "youtube": "",
+    "github": "",
+    "demo": "kitchen",
+    "linked_paper": "",
+    "images": []
+  },
   {
     "title": "Antwerp Voices: Celebrating Citizens’ Stories",
     "description": "A VR storytelling experience that immerses users in the personal narratives of Antwerp citizens using 360-degree video, inspired by the Human Library concept. I developed all the Unity environment, sound design, interaction with no controllers (since it is thought to be done in a museum setting). The environment is presented to the user as a map of Antwerp. There are books coming out of the map. Each book represents a different story of a different person from the city. Each story has a unique interaction mode and story telling technique, which is discussed with the person whose story is told",
@@ -152,6 +179,10 @@ export const publicationsData: Publication[] = [
     "open_access": true
   }
 ];
+
+export const scholarData: Scholar = {
+  title: "Google Scholar",
+};
 
 export const musicData: Music = {
   title: "my music",

@@ -5,6 +5,9 @@ import { Vector3, MOUSE } from 'three';
 import { easing } from 'maath';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
+// Pixels of trackpad horizontal drag before we treat it as "pan intent"
+const TRACKPAD_PAN_THRESHOLD = 3;
+
 interface CameraRigProps {
   selectedPosition: [number, number, number] | null;
   selectedScale: [number, number, number] | null;
@@ -27,23 +30,36 @@ export const CameraRig: React.FC<CameraRigProps> = ({
     const handleWheel = (e: WheelEvent) => {
       // STOP PROPAGATION to prevent OrbitControls from zooming
       e.stopPropagation();
-      
-      // Activate Deck Mode
+
+      const absX = Math.abs(e.deltaX);
+      const absY = Math.abs(e.deltaY);
+
+      // Trackpad horizontal swipe → pan camera
+      if (absX > TRACKPAD_PAN_THRESHOLD && absX > absY * 0.5) {
+        const panSpeed = e.deltaMode === 0 ? 0.015 : 0.5; // pixel mode vs line mode
+        const right = new Vector3();
+        right.setFromMatrixColumn(camera.matrixWorld, 0);
+        right.multiplyScalar(e.deltaX * panSpeed);
+        camera.position.add(right);
+        if (controls.current) {
+          controls.current.target.add(right);
+          controls.current.update();
+        }
+        return;
+      }
+
+      // Vertical scroll → Deck Mode
       setDeckMode(true);
 
-      // Accumulate delta to reduce sensitivity
       scrollAccumulator.current += e.deltaY;
-      const threshold = 60; // Adjust this for sensitivity (higher = less sensitive)
+      const threshold = 60;
 
       if (Math.abs(scrollAccumulator.current) > threshold) {
         if (scrollAccumulator.current > 0) {
-             // Scroll Down -> Next Item
-             setFocusedIndex((prev) => (prev + 1) % itemsCount);
+          setFocusedIndex((prev) => (prev + 1) % itemsCount);
         } else {
-             // Scroll Up -> Prev Item
-             setFocusedIndex((prev) => (prev - 1 + itemsCount) % itemsCount);
+          setFocusedIndex((prev) => (prev - 1 + itemsCount) % itemsCount);
         }
-        // Reset accumulator
         scrollAccumulator.current = 0;
       }
     };
@@ -55,7 +71,7 @@ export const CameraRig: React.FC<CameraRigProps> = ({
     return () => {
       canvasEl.removeEventListener('wheel', handleWheel, { capture: true });
     };
-  }, [gl, itemsCount, setDeckMode, setFocusedIndex]);
+  }, [gl, camera, controls, itemsCount, setDeckMode, setFocusedIndex]);
 
   // --- ORBIT CONTROLS RESET ---
   const handleStart = () => {
