@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Large local assets (PDFs, certifications) — not committed to keep repo lean
+Assets/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

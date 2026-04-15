@@ -59,7 +59,7 @@ export const Artifact: React.FC<ArtifactProps> = ({
               text: "#ffffff",
               edge: "#262626"
           };
-      } else if (item.type === 'publication') {
+      } else if (item.type === 'publication' || item.type === 'thesis' || item.type === 'paper') {
           return {
               base: new Color("#fef3c7"),
               hover: new Color("#fde68a"),
@@ -91,57 +91,60 @@ export const Artifact: React.FC<ArtifactProps> = ({
   const emissiveBase = new Color("#000000");
   const emissiveHover = new Color("#ea580c");
 
-  const isFilteredOut = activeFilter !== null && item.type !== activeFilter && item.type !== 'scholar';
-  const isFilterMatch = activeFilter !== null && item.type === activeFilter;
+  const isResearchType = item.type === 'thesis' || item.type === 'paper' || item.type === 'publication';
+  const matchesFilter = activeFilter === null
+    ? true
+    : activeFilter === 'research'
+      ? isResearchType
+      : item.type === activeFilter;
+  const isFilteredOut = activeFilter !== null && !matchesFilter && item.type !== 'scholar';
+  const isFilterMatch = activeFilter !== null && matchesFilter;
 
   useFrame((state, delta) => {
     if (groupRef.current) {
       let targetPos = new Vector3(...item.position);
-      // We will calculate targetRot dynamically based on camera position
       let targetRot = new Euler();
+      let deckScaleMult = 1.0;
 
       if (!introComplete) {
          // PILE STATE
          targetPos = initialPileState.position;
          targetRot = initialPileState.rotation;
       } else if (deckMode) {
-          // --- DECK MODE LOGIC ---
-          const isFocused = item.index === focusedIndex;
-          
-          if (isFocused) {
-              // Position: In front of camera
-              vec.set(0, 0, -4); // 4 units in front of camera
+          // --- HELIX DECK MODE ---
+          const d = item.index - focusedIndex;
+          const absd = Math.abs(d);
+          deckScaleMult = absd === 0 ? 1.12 : Math.max(0.22, 1.0 - absd * 0.1);
+
+          if (absd === 0) {
+              // Focused card: front and center
+              vec.set(0, 0, -4.5);
               vec.applyMatrix4(camera.matrixWorld);
               targetPos.copy(vec);
-
-              // Rotation: Match camera rotation exactly
+              targetRot.copy(camera.rotation);
+          } else if (absd > 9) {
+              // Too far away: park behind camera out of view
+              vec.set(0, 0, 14);
+              vec.applyMatrix4(camera.matrixWorld);
+              targetPos.copy(vec);
               targetRot.copy(camera.rotation);
           } else {
-              const isNext = item.index === (focusedIndex + 1); 
-              
-              if (isNext) {
-                 // Position: Slightly behind and right
-                 vec.set(1.5, -0.5, -5); 
-                 vec.applyMatrix4(camera.matrixWorld);
-                 targetPos.copy(vec);
-                 
-                 // Rotation: Match camera but tilt slightly
-                 targetRot.copy(camera.rotation);
-                 targetRot.z += 0.1;
-              }
-              // Else stay at original world position
-              else {
-                // For items staying in the cube during deck mode, they should still look at camera?
-                // The prompt says "rest stay in their place". 
-                // Let's apply the dynamic lookAt logic below to them as well so they don't look dead.
-                dummy.position.copy(targetPos);
-                dummy.lookAt(state.camera.position);
-                targetRot.copy(dummy.rotation);
-              }
+              // Helix: coil behind the focused card, slowly auto-rotating
+              const TURNS = 2.4;
+              const helixAngle = (d / TURNS) * Math.PI * 2 + state.clock.elapsedTime * 0.28;
+              const radius = 1.85 + absd * 0.14;
+              const hx = Math.cos(helixAngle) * radius;
+              const hy = Math.sin(helixAngle) * radius * 0.44;
+              const hz = -4.5 - absd * 0.88;
+              vec.set(hx, hy, hz);
+              vec.applyMatrix4(camera.matrixWorld);
+              targetPos.copy(vec);
+              dummy.position.copy(targetPos);
+              dummy.lookAt(state.camera.position);
+              targetRot.copy(dummy.rotation);
           }
       } else {
           // --- NORMAL MODE: DYNAMIC LOOK AT ---
-          // Calculate rotation to look at the camera from the target position
           dummy.position.copy(targetPos);
           dummy.lookAt(state.camera.position);
           targetRot.copy(dummy.rotation);
@@ -154,11 +157,12 @@ export const Artifact: React.FC<ArtifactProps> = ({
         targetPos.z += 1.2;
       }
 
-      // Apply Damping
-      easing.damp3(groupRef.current.position, targetPos, deckMode ? 0.4 : 0.8, delta);
-      easing.dampE(groupRef.current.rotation, targetRot, deckMode ? 0.4 : 0.6, delta);
-      // Filter scale: shrink filtered-out cubes to a point
-      easing.damp3(groupRef.current.scale, isFilteredOut ? [0.001, 0.001, 0.001] : [1, 1, 1], 0.35, delta);
+      // Apply Damping — faster in deck mode for snappier feel
+      easing.damp3(groupRef.current.position, targetPos, deckMode ? 0.65 : 0.8, delta);
+      easing.dampE(groupRef.current.rotation, targetRot, deckMode ? 0.55 : 0.6, delta);
+      // Scale: filter shrink takes priority, then deck scale multiplier
+      const baseScale = deckScaleMult;
+      easing.damp3(groupRef.current.scale, isFilteredOut ? [0.001, 0.001, 0.001] : [baseScale, baseScale, baseScale], 0.35, delta);
     }
 
     if (!meshRef.current) return;
@@ -188,7 +192,11 @@ export const Artifact: React.FC<ArtifactProps> = ({
             ? 0.3 
             : (isSelected ? 0.1 : hovered ? 0.1 : 0.0);
         
-        const targetOpacity = isGhost ? 0.1 : 1.0;
+        let targetOpacity = isGhost ? 0.1 : 1.0;
+        if (deckMode && !isGhost) {
+          const absd = Math.abs(item.index - focusedIndex);
+          targetOpacity = absd === 0 ? 1.0 : Math.max(0.15, 1.0 - absd * 0.13);
+        }
         
         const targetColor = isSelected ? config.selected : hovered ? config.hover : isGhost ? colorGhost : config.base;
         
@@ -241,10 +249,10 @@ export const Artifact: React.FC<ArtifactProps> = ({
   });
 
   // --- TEXT POSITIONING ---
-  const isPublication = item.type === 'publication';
-  
+  const isPublication = item.type === 'publication' || item.type === 'thesis' || item.type === 'paper';
+
   // Position text slightly in front of the mesh
-  const localTextPosition: [number, number, number] = isPublication 
+  const localTextPosition: [number, number, number] = isPublication
     ? [
         -item.scale[0] / 2 + 0.1, 
         item.scale[1] / 2 - 0.1, 
@@ -259,7 +267,7 @@ export const Artifact: React.FC<ArtifactProps> = ({
   const isGhost = isAnySelected && !isSelected;
 
   const getYear = () => {
-    if (item.type === 'publication') return (item.data as any).year;
+    if (item.type === 'publication' || item.type === 'thesis' || item.type === 'paper') return (item.data as any).year;
     return null;
   };
 

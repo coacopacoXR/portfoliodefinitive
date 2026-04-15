@@ -1,0 +1,7 @@
+@import '@fontsource/courier-prime';
+@import '@fontsource/courier-prime/700.css';
+@import '@fontsource/courier-prime/400-italic.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
