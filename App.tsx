@@ -612,10 +612,10 @@ const ResearchTab = ({ isHackerMode }: { isHackerMode: boolean }) => {
                   className={`flex items-start gap-3 p-4 border ${isHackerMode ? 'border-green-900 bg-[#050505]' : 'border-gray-200 bg-gray-50'}`}>
                   <span className={`text-[9px] font-mono uppercase whitespace-nowrap mt-0.5 flex-shrink-0 ${isHackerMode ? 'text-green-600' : 'text-orange-500'}`}>{paper.number}</span>
                   <div className="min-w-0">
-                    <p className={`text-xs font-semibold leading-snug mb-1 ${isHackerMode ? 'text-green-400' : 'text-gray-700'}`}>{paper.title}</p>
-                    <p className={`text-[10px] font-mono mb-2 ${meta}`}>{paper.year} · {paper.journal}</p>
+                    <p className={`text-sm font-semibold leading-snug mb-1 ${isHackerMode ? 'text-green-400' : 'text-gray-700'}`}>{paper.title}</p>
+                    <p className={`text-xs font-mono mb-2 ${meta}`}>{paper.year} · {paper.journal}</p>
                     {paper.description && (
-                      <p className={`text-[10px] leading-relaxed mb-2 ${body}`}>{paper.description}</p>
+                      <p className={`text-sm leading-relaxed mb-2 ${body}`}>{paper.description}</p>
                     )}
                     {paper.doi && (
                       <a href={paper.doi} target="_blank" rel="noreferrer"
