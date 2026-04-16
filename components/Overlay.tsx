@@ -133,7 +133,7 @@ export const Overlay: React.FC<OverlayProps> = ({ item, onClose }) => {
                     <iframe
                       style={{ borderRadius: '12px' }}
                       src={item.data.spotifyEmbedUrl}
-                      width="100%" height="352"
+                      width="100%" height="480"
                       frameBorder="0" allowFullScreen
                       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                       loading="lazy"
