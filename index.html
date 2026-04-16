@@ -15,6 +15,17 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      window.onerror = function(msg, src, line, col, err) {
+        document.body.innerHTML = '<pre style="position:fixed;inset:0;padding:24px;background:#1a1a1a;color:#f97316;font-size:13px;overflow:auto;z-index:9999;white-space:pre-wrap;">'
+          + 'ERROR: ' + msg + '\n\nFile: ' + src + ':' + line
+          + (err ? '\n\nStack:\n' + err.stack : '') + '</pre>';
+      };
+      window.onunhandledrejection = function(e) {
+        document.body.innerHTML = '<pre style="position:fixed;inset:0;padding:24px;background:#1a1a1a;color:#f97316;font-size:13px;overflow:auto;z-index:9999;white-space:pre-wrap;">'
+          + 'UNHANDLED REJECTION:\n' + (e.reason?.stack || e.reason) + '</pre>';
+      };
+    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
