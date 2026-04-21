@@ -588,34 +588,34 @@ const ResearchTab = ({ isHackerMode }: { isHackerMode: boolean }) => {
   return (
     <div>
       {/* PhD Thesis — Featured */}
-      <div className={`border p-8 mb-10 ${isHackerMode ? 'bg-[#0a0a0a] border-green-800' : 'bg-white border-gray-200'}`}>
-        <div className="flex items-start justify-between mb-2">
+      <div className={`border p-8 md:p-12 mb-10 ${isHackerMode ? 'bg-[#0a0a0a] border-green-800' : 'bg-white border-gray-200'}`}>
+        <div className="flex items-start justify-between mb-3">
           <span className={`text-[9px] font-mono uppercase tracking-widest ${isHackerMode ? 'text-green-600' : 'text-orange-500'}`}>
             PhD Thesis · {thesisData.year}
           </span>
           <span className={`text-[9px] font-mono ${meta}`}>[Kappa]</span>
         </div>
-        <h2 className={`text-2xl md:text-3xl font-bold leading-tight mb-2 ${isHackerMode ? 'text-green-300' : 'text-[#1a1a1a]'}`}>
+        <h2 className={`text-3xl md:text-4xl font-bold leading-tight mb-3 ${isHackerMode ? 'text-green-300' : 'text-[#1a1a1a]'}`}>
           {thesisData.title}
         </h2>
-        <p className={`text-sm font-mono mb-6 ${meta}`}>{thesisData.university}</p>
-        <p className={`text-base leading-relaxed mb-8 max-w-3xl ${body}`}>{thesisData.abstract}</p>
+        <p className={`text-sm font-mono mb-7 ${meta}`}>{thesisData.university}</p>
+        <p className={`text-base leading-relaxed mb-10 max-w-4xl ${body}`}>{thesisData.abstract}</p>
 
         {/* Papers */}
         <div className="mb-6">
           <p className={`text-[9px] font-mono uppercase tracking-widest mb-3 ${meta}`}>
             Appended Papers ({thesisData.papers.length})
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {thesisData.papers.map(paper => (
                 <div key={paper.number}
-                  className={`flex items-start gap-3 p-4 border ${isHackerMode ? 'border-green-900 bg-[#050505]' : 'border-gray-200 bg-gray-50'}`}>
+                  className={`flex items-start gap-4 p-5 border ${isHackerMode ? 'border-green-900 bg-[#050505]' : 'border-gray-200 bg-gray-50'}`}>
                   <span className={`text-[9px] font-mono uppercase whitespace-nowrap mt-0.5 flex-shrink-0 ${isHackerMode ? 'text-green-600' : 'text-orange-500'}`}>{paper.number}</span>
                   <div className="min-w-0">
-                    <p className={`text-sm font-semibold leading-snug mb-1 ${isHackerMode ? 'text-green-400' : 'text-gray-700'}`}>{paper.title}</p>
-                    <p className={`text-xs font-mono mb-2 ${meta}`}>{paper.year} · {paper.journal}</p>
+                    <p className={`text-sm font-semibold leading-snug mb-1.5 ${isHackerMode ? 'text-green-400' : 'text-gray-700'}`}>{paper.title}</p>
+                    <p className={`text-xs font-mono mb-2.5 ${meta}`}>{paper.year} · {paper.journal}</p>
                     {paper.description && (
-                      <p className={`text-sm leading-relaxed mb-2 ${body}`}>{paper.description}</p>
+                      <p className={`text-sm leading-relaxed mb-3 ${body}`}>{paper.description}</p>
                     )}
                     {paper.doi && (
                       <a href={paper.doi} target="_blank" rel="noreferrer"
@@ -649,8 +649,8 @@ const ResearchTab = ({ isHackerMode }: { isHackerMode: boolean }) => {
           { value: confCount,               label: 'Conf. Papers' },
           { value: oaCount,                 label: 'Open Access' },
         ].map(({ value, label }) => (
-          <div key={label} className={`px-6 py-5 ${isHackerMode ? 'bg-[#050505]' : 'bg-[#f0f0f0]'}`}>
-            <p className={`text-3xl font-bold leading-none mb-1 ${isHackerMode ? 'text-green-400' : 'text-[#1a1a1a]'}`}>{value}</p>
+          <div key={label} className={`px-8 py-6 ${isHackerMode ? 'bg-[#050505]' : 'bg-[#f0f0f0]'}`}>
+            <p className={`text-4xl font-bold leading-none mb-1.5 ${isHackerMode ? 'text-green-400' : 'text-[#1a1a1a]'}`}>{value}</p>
             <p className={`text-[9px] font-mono uppercase tracking-widest ${meta}`}>{label}</p>
           </div>
         ))}
@@ -663,7 +663,7 @@ const ResearchTab = ({ isHackerMode }: { isHackerMode: boolean }) => {
             <p className={`text-[9px] font-mono uppercase tracking-widest mb-3 ${meta}`}>{year}</p>
             <div className={`flex flex-col border-t ${section}`}>
               {publicationsData.filter(p => p.year === year).map((pub, i) => (
-                <div key={i} className={`flex flex-col md:flex-row md:items-baseline gap-2 md:gap-5 py-3 border-b ${section}`}>
+                <div key={i} className={`flex flex-col md:flex-row md:items-baseline gap-2 md:gap-5 py-4 border-b ${section}`}>
                   <div className="flex-shrink-0">
                     <span className={`text-[8px] font-mono uppercase tracking-wider px-1.5 py-0.5 border
                       ${pub.type === 'Article'
@@ -673,12 +673,12 @@ const ResearchTab = ({ isHackerMode }: { isHackerMode: boolean }) => {
                     </span>
                   </div>
                   <div className="flex-grow min-w-0">
-                    <p className={`text-sm font-semibold leading-snug mb-0.5 ${isHackerMode ? 'text-green-300' : 'text-[#1a1a1a]'}`}>
+                    <p className={`text-base font-semibold leading-snug mb-1 ${isHackerMode ? 'text-green-300' : 'text-[#1a1a1a]'}`}>
                       {pub.doi
                         ? <a href={pub.doi} target="_blank" rel="noreferrer" className={`hover:underline underline-offset-2 transition-colors ${isHackerMode ? 'hover:text-green-100' : 'hover:text-orange-600'}`}>{pub.title}</a>
                         : pub.title}
                     </p>
-                    <p className={`text-xs italic truncate ${body}`}>{pub.journal}</p>
+                    <p className={`text-sm italic truncate ${body}`}>{pub.journal}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {pub.open_access && (
@@ -920,7 +920,7 @@ const TwoDimensionalView = ({ items, onSelect, isHackerMode, activeTab }: { item
       {/* Mobile sub-nav spacer (mobile tabs adds ~40px) */}
       <div className="md:hidden h-10" />
 
-      <div className="max-w-5xl mx-auto px-4 md:px-8 py-10">
+      <div className={`mx-auto px-4 md:px-8 py-10 ${activeTab === 'research' ? 'max-w-6xl' : 'max-w-5xl'}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

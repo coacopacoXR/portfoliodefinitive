@@ -71,12 +71,57 @@ export const projectsData: Project[] = [
 
 export const publicationsData: Publication[] = [
   {
+    year: 2026,
+    title: "Towards Advanced Collaboration Systems for Design Reviews in Product and Production Development",
+    authors: "Francisco Garcia Rivera, P Mugur, D Li, Henrik Söderlund",
+    journal: "IOP Conference Series: Materials Science and Engineering 1342 (1), 012040",
+    type: "Conference Paper",
+    doi: "https://doi.org/10.1088/1757-899X/1342/1/012040",
+    open_access: true
+  },
+  {
+    year: 2025,
+    title: "Human-centered design of VR interface features to support mental workload and spatial cognition during collaboration tasks in manufacturing",
+    authors: "Huizhong Cao, Francisco Garcia Rivera, Henrik Söderlund, C Berlin, J Stahre, Björn Johansson",
+    journal: "Cognition, Technology & Work 27 (3), 467–485",
+    type: "Article",
+    doi: "https://doi.org/10.1007/s10111-025-00809-6",
+    open_access: true
+  },
+  {
+    year: 2025,
+    title: "Beyond Videoconferencing: How Collaborative Tools Make Virtual Design Reviews Work",
+    authors: "Francisco Garcia Rivera, Asreen Rostami, Huizhong Cao, Dan Högberg, Maurice Lamb",
+    journal: "International Conference on Human-Computer Interaction (HCII 2025)",
+    type: "Conference Paper",
+    doi: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=h2on66wAAAAJ&citation_for_view=h2on66wAAAAJ:0EnyYjriUFMC",
+    open_access: false
+  },
+  {
     year: 2025,
     title: "Friction situations in real-world remote design reviews when using CAD and videoconferencing tools",
     authors: "Francisco Garcia Rivera, Maurice Lamb, Dan Högberg, Beatrice Alenljung",
-    journal: "Empathic Computing",
+    journal: "Empathic Computing 1 (1)",
     type: "Article",
     doi: "https://doi.org/10.70401/ec.2025.0001",
+    open_access: true
+  },
+  {
+    year: 2024,
+    title: "Leveraging Activity Theory and Functional Modelling for Implementing Extended Reality in Design Reviews",
+    authors: "Francisco Garcia Rivera, Francesco Ferrise, M Panarotto",
+    journal: "Congress of the International Ergonomics Association (IEA 2024), 360–366",
+    type: "Conference Paper",
+    doi: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=h2on66wAAAAJ&citation_for_view=h2on66wAAAAJ:MXK_kJrjxJIC",
+    open_access: false
+  },
+  {
+    year: 2024,
+    title: "How Can XR Enhance Collaboration with CAD/CAE Tools in Remote Design Reviews?",
+    authors: "Francisco Garcia Rivera, Asreen Rostami, Sandra Mattsson, Henrik Söderlund",
+    journal: "Proceedings of the 11th Swedish Production Symposium (SPS2024)",
+    type: "Conference Paper",
+    doi: "https://doi.org/10.3233/ATDE240182",
     open_access: true
   },
   {
@@ -90,27 +135,18 @@ export const publicationsData: Publication[] = [
   },
   {
     year: 2024,
-    title: "How Can XR Enhance Collaboration with CAD/CAE Tools in Remote Design Reviews?",
-    authors: "Francisco Garcia Rivera, Rostami Asreen, Sandra Mattsson, Henrik Söderlund",
-    journal: "Proceedings of the 11th Swedish Production Symposium (SPS2024)",
-    type: "Conference Paper",
-    doi: "https://doi.org/10.3233/ATDE240182",
-    open_access: true
-  },
-  {
-    year: 2024,
     title: "Examining the Impact of Camera Control on Collaborative Problem-Solving",
     authors: "Francisco Garcia Rivera, Maurice Lamb",
     journal: "Proceedings of the 19th SweCog Conference",
-    type: "Conference Paper, Poster",
-    doi: "",
+    type: "Conference Paper",
+    doi: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=h2on66wAAAAJ&citation_for_view=h2on66wAAAAJ:UebtZRa9Y70C",
     open_access: true
   },
   {
     year: 2023,
     title: "New technologies for the classification of proximal humeral fractures: Comparison between Virtual Reality and 3D printed models—a randomised controlled trial",
     authors: "Rafael Almirón Santa-Bárbara, Francisco García Rivera, Maurice Lamb, Rodrigo Víquez Da-Silva, Mario Gutiérrez Bedmar",
-    journal: "Virtual Reality",
+    journal: "Virtual Reality 27 (3), 1623–1634",
     type: "Article",
     doi: "https://doi.org/10.1007/s10055-023-00757-4",
     open_access: true
@@ -119,7 +155,7 @@ export const publicationsData: Publication[] = [
     year: 2022,
     title: "DHM supported assessment of the effects of using an exoskeleton during work",
     authors: "Francisco Garcia Rivera, Dan Högberg, Maurice Lamb, Estela Perez Luque",
-    journal: "International Journal of Human Factors Modelling and Simulation",
+    journal: "International Journal of Human Factors Modelling and Simulation 7 (3–4), 231–246",
     type: "Article",
     doi: "https://doi.org/10.1504/ijhfms.2021.10048920",
     open_access: false
@@ -146,7 +182,7 @@ export const publicationsData: Publication[] = [
     year: 2021,
     title: "A Framework to Model the Use of Exoskeletons in DHM Tools",
     authors: "Francisco Garcia Rivera, Anna Brolin, Estela Perez Luque, Dan Högberg",
-    journal: "Advances in Simulation and Digital Human Modeling",
+    journal: "Advances in Simulation and Digital Human Modeling (AHFE 2021)",
     type: "Conference Paper",
     doi: "https://doi.org/10.1007/978-3-030-79763-8_38",
     open_access: false
@@ -162,8 +198,17 @@ export const publicationsData: Publication[] = [
   },
   {
     year: 2020,
+    title: "The Use and Usage of Virtual Reality Technologies in Planning and Implementing New Workstations",
+    authors: "René Reinhard, Peter Mårdberg, Francisco García Rivera, Tobias Forsberg, Anton Berce, Fang Mingji, Dan Högberg",
+    journal: "DHM2020: Proceedings of the 6th International Digital Human Modeling Symposium",
+    type: "Conference Paper",
+    doi: "https://doi.org/10.3233/ATDE200047",
+    open_access: true
+  },
+  {
+    year: 2020,
     title: "Aiding Observational Ergonomic Evaluation Methods Using MOCAP Systems Supported by AI-Based Posture Recognition",
-    authors: "Victor Igelmo, Anna Syberfeldt, Dan Högberg, Francisco García Rivera, Estela Peréz Luque",
+    authors: "Victor Igelmo, Anna Syberfeldt, Dan Högberg, Francisco García Rivera, Estela Pérez Luque",
     journal: "DHM2020: Proceedings of the 6th International Digital Human Modeling Symposium",
     type: "Conference Paper",
     doi: "https://doi.org/10.3233/ATDE200050",
@@ -188,14 +233,23 @@ export const publicationsData: Publication[] = [
     open_access: true
   },
   {
-    year: 2020,
-    title: "The Use and Usage of Virtual Reality Technologies in Planning and Implementing New Workstations",
-    authors: "René Reinhard, Peter Mårdberg, Francisco García Rivera, Tobias Forsberg, Anton Berce, Fang Mingji, Dan Högberg",
-    journal: "DHM2020: Proceedings of the 6th International Digital Human Modeling Symposium",
-    type: "Conference Paper",
-    doi: "https://doi.org/10.3233/ATDE200047",
+    year: 2019,
+    title: "Using Motion Capture and Virtual Reality to Test the Advantages of Human Robot Collaboration",
+    authors: "Francisco Garcia Rivera",
+    journal: "MSc Thesis, University of Skövde",
+    type: "Thesis",
+    doi: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=h2on66wAAAAJ&citation_for_view=h2on66wAAAAJ:9yKSN-GCB0IC",
     open_access: true
-  }
+  },
+  {
+    year: 2018,
+    title: "Implementation of Metallic Profiles in Social Houses",
+    authors: "Francisco Garcia Rivera, D Hoyos Rodriguez",
+    journal: "BSc Thesis",
+    type: "Thesis",
+    doi: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=h2on66wAAAAJ&citation_for_view=h2on66wAAAAJ:eQOLeE2rZwMC",
+    open_access: false
+  },
 ];
 
 export const scholarData: Scholar = {
