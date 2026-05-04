@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 
 // Repo name — also used as the GitHub Pages sub-path.
 // If you add a custom domain, change this to '/' and update CNAME.
-const REPO_NAME = 'portfoliodefinitive';
+const REPO_NAME = 'FGRivera';
 
 function copyDirRecursive(src: string, dest: string) {
   if (!fs.existsSync(src)) return;
